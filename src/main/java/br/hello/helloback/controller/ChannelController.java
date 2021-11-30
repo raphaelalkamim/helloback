@@ -32,7 +32,7 @@ public class ChannelController {
     //GET ONE
 
     @RequestMapping(value = "/channels/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Channel> getByID(@PathVariable(value = "id") long id) { 
+    public ResponseEntity<Channel> getChannelByID(@PathVariable(value = "id") long id) { 
         Optional<Channel> response = channelRepository.findById(id);
         if (response.isPresent()) {
             return new ResponseEntity<Channel>(response.get(), HttpStatus.OK);
@@ -45,7 +45,7 @@ public class ChannelController {
     //POST
 
     @RequestMapping(value = "/channels", method = RequestMethod.POST)
-    public Channel createUnit(@Valid @RequestBody Channel channel) { 
+    public Channel createChannel(@Valid @RequestBody Channel channel) { 
         return channelRepository.save(channel);
     };
 
@@ -53,7 +53,7 @@ public class ChannelController {
     //DELETE
 
     @RequestMapping(value = "/channels/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Channel> deleteByID(@PathVariable(value = "id") long id) { 
+    public ResponseEntity<Channel> deleteChannelByID(@PathVariable(value = "id") long id) { 
         Optional<Channel> response = channelRepository.findById(id);
         if (response.isPresent()) {
             channelRepository.delete(response.get());
@@ -66,7 +66,7 @@ public class ChannelController {
     //PUT
 
     @RequestMapping(value = "/channel/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Channel> putByID(@PathVariable(value = "id") long id, @Valid @RequestBody Channel newChannel) { 
+    public ResponseEntity<Channel> putChannelByID(@PathVariable(value = "id") long id, @Valid @RequestBody Channel newChannel) { 
         Optional<Channel> response = channelRepository.findById(id);
         if (response.isPresent()) {
             Channel channel = response.get();
