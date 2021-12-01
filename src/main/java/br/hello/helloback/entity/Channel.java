@@ -1,17 +1,29 @@
 package br.hello.helloback.entity;
 
+import java.util.List;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "channel")
 public class Channel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    
+    @Column(nullable=false)
     private String name;
+    @Column(nullable=false)
     private String description;
+    
+    @OneToMany(mappedBy = "channel")
+    private List<Post> posts;
 
     public long getId() {
         return id;
