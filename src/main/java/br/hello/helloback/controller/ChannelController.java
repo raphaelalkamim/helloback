@@ -4,6 +4,7 @@ import br.hello.helloback.entity.Channel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,9 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
+
 import javax.validation.Valid;
 
 import br.hello.helloback.repository.ChannelRepository;
+import javassist.tools.web.BadHttpRequest;
 
 @RestController
 public class ChannelController {
@@ -44,8 +47,12 @@ public class ChannelController {
     // POST
 
     @RequestMapping(value = "/channels", method = RequestMethod.POST)
-    public Channel createChannel(@Valid @RequestBody Channel channel) {
-        return channelRepository.save(channel);
+    public ResponseEntity<Channel> createChannel(@Valid @RequestBody Channel channel, BindingResult bidingResult) throws BadHttpRequest {
+        if (bidingResult.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            //TODO: Melhorar resposta (LUCA)
+        }
+        return new ResponseEntity<Channel>(channelRepository.save(channel), (HttpStatus.CREATED));
     };
 
     // DELETE

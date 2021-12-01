@@ -2,6 +2,7 @@ package br.hello.helloback.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,20 +13,26 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "post")
 public class Post {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @Column(nullable=false)
     private String content;
+
     @Column(nullable=false)
     private String creationTime;
-    @Column(nullable=false)
+
     private String editionTime;
     
-    @ManyToOne
-    @JoinColumn(name="channel_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="channel_id", nullable = false)
     private Channel channel;
+
+    public Post() {
+
+    }
 
 
     public long getId() {
@@ -59,4 +66,13 @@ public class Post {
     public void setEditionTime(String editionTime) {
         this.editionTime = editionTime;
     }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
 }
