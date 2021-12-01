@@ -21,39 +21,37 @@ public class ChannelController {
     @Autowired
     private ChannelRepository channelRepository;
 
-    //GET ALL
+    // GET ALL
 
     @RequestMapping(value = "/channels", method = RequestMethod.GET)
-    public List<Channel> getAll() { 
+    public List<Channel> getAll() {
         return channelRepository.findAll();
     };
 
-
-    //GET ONE
+    // GET ONE
 
     @RequestMapping(value = "/channels/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Channel> getChannelByID(@PathVariable(value = "id") long id) { 
+    public ResponseEntity<Channel> getChannelByID(@PathVariable(value = "id") long id) {
         Optional<Channel> response = channelRepository.findById(id);
         if (response.isPresent()) {
             return new ResponseEntity<Channel>(response.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        
+
     }
 
-    //POST
+    // POST
 
     @RequestMapping(value = "/channels", method = RequestMethod.POST)
-    public Channel createChannel(@Valid @RequestBody Channel channel) { 
+    public Channel createChannel(@Valid @RequestBody Channel channel) {
         return channelRepository.save(channel);
     };
 
-
-    //DELETE
+    // DELETE
 
     @RequestMapping(value = "/channels/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Channel> deleteChannelByID(@PathVariable(value = "id") long id) { 
+    public ResponseEntity<Channel> deleteChannelByID(@PathVariable(value = "id") long id) {
         Optional<Channel> response = channelRepository.findById(id);
         if (response.isPresent()) {
             channelRepository.delete(response.get());
@@ -63,24 +61,23 @@ public class ChannelController {
         }
     };
 
-    //PUT
+    // PUT
 
-    @RequestMapping(value = "/channel/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Channel> putChannelByID(@PathVariable(value = "id") long id, @Valid @RequestBody Channel newChannel) { 
+    @RequestMapping(value = "/channels/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Channel> putChannelByID(@PathVariable(value = "id") long id,
+            @Valid @RequestBody Channel newChannel) {
         Optional<Channel> response = channelRepository.findById(id);
         if (response.isPresent()) {
             Channel channel = response.get();
             channel.setName(newChannel.getName());
             channel.setDescription(newChannel.getDescription());
             channelRepository.save(channel);
-            
-            
+
             return new ResponseEntity<Channel>(channel, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        
-    }
 
+    }
 
 }
