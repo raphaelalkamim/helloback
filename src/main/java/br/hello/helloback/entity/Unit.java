@@ -2,13 +2,17 @@ package br.hello.helloback.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -30,6 +34,11 @@ public class Unit {
     @Column(nullable = false)
     @PositiveOrZero(message = "MaxUsers não pode ser negativo")
     private Long maxUsers;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "unit_id", nullable = true)
+    //@JsonIgnore
+    private Unit unitMother;
 
     public Unit() {
 
@@ -65,6 +74,14 @@ public class Unit {
 
     public void setMaxUsers(Long maxUsers) {
         this.maxUsers = maxUsers;
+    }
+
+    public Unit getUnitMother() {
+        return unitMother;
+    }
+
+    public void setUnitMother(Unit unitMother) {
+        this.unitMother = unitMother;
     }
 
 }

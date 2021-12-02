@@ -2,6 +2,7 @@ package br.hello.helloback.controller;
 
 import br.hello.helloback.entity.Channel;
 import br.hello.helloback.entity.Post;
+import br.hello.helloback.entity.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,11 +19,15 @@ import javax.validation.Valid;
 
 import br.hello.helloback.repository.ChannelRepository;
 import br.hello.helloback.repository.PostRepository;
+import br.hello.helloback.repository.UserRepository;
 
 @RestController
 public class PostController {
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private ChannelRepository channelRepository;
@@ -63,12 +68,17 @@ public class PostController {
 
     // POST
 
-    @RequestMapping(value = "/channels/{channelId}/posts", method = RequestMethod.POST)
+    @RequestMapping(value = "/channels/{channelId}/users/{userID}/posts", method = RequestMethod.POST)
     public ResponseEntity<Post> createPost(@Valid @RequestBody Post post,
-            @PathVariable(value = "channelId") Long channelId) {
-        Optional<Channel> response = channelRepository.findById(channelId);
-        if (response.isPresent()) {
-            post.setChannel(response.get());
+            @PathVariable(value = "channelId") Long channelId, 
+            @PathVariable(value = "userID") Long userId)
+             {
+        Optional<Channel> responseChannel = channelRepository.findById(channelId);
+        Optional<User> responseUser = userRepository.findById(userId);
+        
+        if (responseChannel.isPresent() && responseUser.isPresent()) {
+            post.setChannel(responseChannel.get());
+            post.setUser(responseUser.get());
             return new ResponseEntity<Post>(postRepository.save(post), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

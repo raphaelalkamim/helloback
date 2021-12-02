@@ -42,11 +42,25 @@ public class UnitController {
         
     }
 
-    //POST
+    //POST MOTHER
 
-    @RequestMapping(value = "/units", method = RequestMethod.POST)
-    public Unit createUnit(@Valid @RequestBody Unit unit) { 
-        return unitRepository.save(unit);
+    @RequestMapping(value = "/unitMother", method = RequestMethod.POST)
+    public Unit createUnit(@Valid @RequestBody Unit unitMother) { 
+        return unitRepository.save(unitMother);
+    };
+
+    //POST DAUGTHER
+
+    @RequestMapping(value = "/unitMother/{unitMotherId}/units", method = RequestMethod.POST)
+    public ResponseEntity<Unit> createChannel(@Valid @RequestBody Unit unit,
+            @PathVariable(value = "unitMotherId") Long unitMotherId) {
+        Optional<Unit> response = unitRepository.findById(unitMotherId);
+        if (response.isPresent()) {
+            unit.setUnitMother(response.get());
+            return new ResponseEntity<Unit>(unitRepository.save(unit), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     };
 
 

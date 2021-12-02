@@ -45,8 +45,14 @@ public class UserController {
     //POST
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
-    public User createUser(@Valid @RequestBody User unit) { 
-        return userRepository.save(unit);
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) { 
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            return new ResponseEntity<User>(HttpStatus.CONFLICT);
+
+        } else {
+            return new ResponseEntity<User>(userRepository.save(user), HttpStatus.OK);
+        }
+    
     };
 
 
