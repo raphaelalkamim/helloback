@@ -3,7 +3,6 @@ package br.hello.helloback.controller;
 import br.hello.helloback.entity.Channel;
 import br.hello.helloback.entity.Post;
 
-import org.hibernate.annotations.SourceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,15 +37,14 @@ public class PostController {
     // GET ALL POSTS BY CHANNEL
 
     @RequestMapping(value = "channels/{id}/posts", method = RequestMethod.GET)
-    public List<Post> getAllPostsChannel(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<List<Post>> getAllPostsChannel(@PathVariable(value = "id") Long id) {
         List<Post> posts = new ArrayList<>();
-        postRepository.findByChannelId(id).forEach(posts::add);
-        return posts;
-        // if (response.size() != 0) {
-        // return new ResponseEntity<Post>(response.get(0), HttpStatus.OK);
-        // } else {
-        // return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        // }
+        if (channelRepository.findById(id).isPresent()) {
+            postRepository.findByChannelId(id).forEach(posts::add);
+            return new ResponseEntity<List<Post>>(posts, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
     }
 
@@ -75,13 +73,6 @@ public class PostController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        // Optional<Channel> response = channelRepository.findById(channelId);
-        // System.out.println(response);
-        // if (response.isPresent()) {
-        // post.setChannel(response.get());
-        // }
-        // return postRepository.save(post);
     };
 
     // DELETE

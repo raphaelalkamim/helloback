@@ -16,7 +16,6 @@ import java.util.*;
 import javax.validation.Valid;
 
 import br.hello.helloback.repository.ChannelRepository;
-import javassist.tools.web.BadHttpRequest;
 
 @RestController
 public class ChannelController {
