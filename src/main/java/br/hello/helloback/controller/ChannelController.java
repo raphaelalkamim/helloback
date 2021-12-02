@@ -1,6 +1,8 @@
 package br.hello.helloback.controller;
 
 import br.hello.helloback.entity.Channel;
+import br.hello.helloback.entity.Unit;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +18,15 @@ import java.util.*;
 import javax.validation.Valid;
 
 import br.hello.helloback.repository.ChannelRepository;
+import br.hello.helloback.repository.UnitRepository;
 
 @RestController
 public class ChannelController {
     @Autowired
     private ChannelRepository channelRepository;
+
+    @Autowired
+    private UnitRepository unitRepository;
 
     // GET ALL
 
@@ -29,6 +35,19 @@ public class ChannelController {
         return channelRepository.findAll();
     };
 
+    // GET ALL CHANNELS BY UNIT
+
+    @RequestMapping(value = "units/{id}/channels", method = RequestMethod.GET)
+    public ResponseEntity<List<Channel>> getAllPostsChannel(@PathVariable(value = "id") Long id) {
+        List<Channel> channels = new ArrayList<>();
+        if (unitRepository.findById(id).isPresent()) {
+            channelRepository.findByUnitId(id).forEach(channels::add);
+            return new ResponseEntity<List<Channel>>(channels, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+    }
     // GET ONE
 
     @RequestMapping(value = "/channels/{id}", method = RequestMethod.GET)
@@ -44,19 +63,22 @@ public class ChannelController {
 
     // POST
 
-    @RequestMapping(value = "/channels", method = RequestMethod.POST)
-    public ResponseEntity<Channel> createChannel(@Valid @RequestBody Channel channel, BindingResult bidingResult) {
-        if (bidingResult.hasErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            // TODO: Melhorar resposta (LUCA)
+    @RequestMapping(value = "/units/{unitId}/channels", method = RequestMethod.POST)
+    public ResponseEntity<Channel> createChannel(@Valid @RequestBody Channel channel,
+            @PathVariable(value = "unitId") Long unitId) {
+        Optional<Unit> response = unitRepository.findById(unitId);
+        if (response.isPresent()) {
+            channel.setUnit(response.get());
+            return new ResponseEntity<Channel>(channelRepository.save(channel), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<Channel>(channelRepository.save(channel), (HttpStatus.CREATED));
     };
 
     // DELETE
 
     @RequestMapping(value = "/channels/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Channel> deleteChannelByID(@PathVariable(value = "id") long id) {
+    public ResponseEntity<Channel> deleteChannelByID(@PathVariable(value = "id") Long id) {
         Optional<Channel> response = channelRepository.findById(id);
         if (response.isPresent()) {
             channelRepository.delete(response.get());
@@ -69,7 +91,7 @@ public class ChannelController {
     // PUT
 
     @RequestMapping(value = "/channels/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Channel> putChannelByID(@PathVariable(value = "id") long id,
+    public ResponseEntity<Channel> putChannelByID(@PathVariable(value = "id") Long id,
             @Valid @RequestBody Channel newChannel) {
         Optional<Channel> response = channelRepository.findById(id);
         if (response.isPresent()) {

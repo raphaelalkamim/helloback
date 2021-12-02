@@ -51,7 +51,7 @@ public class PostController {
     // GET ONE
 
     @RequestMapping(value = "/posts/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Post> getByID(@PathVariable(value = "id") long id) {
+    public ResponseEntity<Post> getByID(@PathVariable(value = "id") Long id) {
         Optional<Post> response = postRepository.findById(id);
         if (response.isPresent()) {
             return new ResponseEntity<Post>(response.get(), HttpStatus.OK);
@@ -64,7 +64,7 @@ public class PostController {
     // POST
 
     @RequestMapping(value = "/channels/{channelId}/posts", method = RequestMethod.POST)
-    public ResponseEntity<Post> createUnit(@Valid @RequestBody Post post,
+    public ResponseEntity<Post> createPost(@Valid @RequestBody Post post,
             @PathVariable(value = "channelId") Long channelId) {
         Optional<Channel> response = channelRepository.findById(channelId);
         if (response.isPresent()) {
@@ -78,7 +78,7 @@ public class PostController {
     // DELETE
 
     @RequestMapping(value = "/posts/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Post> deleteByID(@PathVariable(value = "id") long id) {
+    public ResponseEntity<Post> deleteByID(@PathVariable(value = "id") Long id) {
         Optional<Post> response = postRepository.findById(id);
         if (response.isPresent()) {
             postRepository.delete(response.get());
@@ -91,7 +91,7 @@ public class PostController {
     // PUT
 
     @RequestMapping(value = "/posts/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Post> putByID(@PathVariable(value = "id") long id, @Valid @RequestBody Post newPost) {
+    public ResponseEntity<Post> putByID(@PathVariable(value = "id") Long id, @Valid @RequestBody Post newPost) {
         Optional<Post> response = postRepository.findById(id);
         if (response.isPresent()) {
             Post post = response.get();

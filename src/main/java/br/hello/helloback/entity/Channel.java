@@ -9,6 +9,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
@@ -30,6 +32,10 @@ public class Channel {
     @Column(nullable = false)
     @NotBlank(message = "Descrição não pode ser nulo")
     private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "unit_id", nullable = false)
+    private Unit unit;
 
     // @OneToMany(mappedBy = "channel", fetch = FetchType.LAZY, cascade =
     // CascadeType.ALL)
@@ -60,6 +66,14 @@ public class Channel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Unit getUnit() {
+        return unit;
+    }
+
+    public void setUnit(Unit unit) {
+        this.unit = unit;
     }
 
     // public List<Post> getPosts() {
