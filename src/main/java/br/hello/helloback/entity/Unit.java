@@ -1,24 +1,45 @@
 package br.hello.helloback.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PositiveOrZero;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+@Table(name = "unit")
 public class Unit {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-    private String name;
-    private String description;
-    private long maxUsers;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "unit_sequence")
+    private Long id;
 
-    public long getId() {
+    @Column(nullable = false)
+    @NotBlank(message = "Nome não pode ser nulo")
+    private String name;
+
+    @Column(nullable = false)
+    @NotBlank(message = "Description não pode ser nulo")
+    private String description;
+
+    @Column(nullable = false)
+    @PositiveOrZero(message = "MaxUsers não pode ser negativo")
+    private Long maxUsers;
+
+    public Unit() {
+
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -38,17 +59,12 @@ public class Unit {
         this.description = description;
     }
 
-    public long getMaxUsers() {
+    public Long getMaxUsers() {
         return maxUsers;
     }
 
-    public void setMaxUsers(long maxUsers) {
+    public void setMaxUsers(Long maxUsers) {
         this.maxUsers = maxUsers;
     }
 
-
-
-
 }
-
-
