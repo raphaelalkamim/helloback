@@ -1,6 +1,8 @@
 package br.hello.helloback.controller;
 
 import br.hello.helloback.entity.AccessKey;
+import br.hello.helloback.entity.Unit;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +17,19 @@ import java.util.*;
 import javax.validation.Valid;
 
 import br.hello.helloback.repository.AccessKeyRepository;
+import br.hello.helloback.repository.UnitRepository;
+import br.hello.helloback.repository.UserRepository;
 
 @RestController
 public class AccessKeyController {
     @Autowired
     private AccessKeyRepository accessKeyRepository;
+
+    @Autowired
+    private UnitRepository unitRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     //GET ALL
 
@@ -44,11 +54,28 @@ public class AccessKeyController {
 
     //POST
 
-    @RequestMapping(value = "/accessKeys", method = RequestMethod.POST)
-    public AccessKey createAccessKey(@Valid @RequestBody AccessKey accessKey) { 
-        return accessKeyRepository.save(accessKey);
-    };
+    @RequestMapping(value = "units/{unitId}/accessKeys", method = RequestMethod.POST)
+    public ResponseEntity<List<AccessKey>> createPost(
+            @PathVariable(value = "unitId") Long unitId)
+             {
+        Optional<Unit> responseUnit = unitRepository.findById(unitId);
+        List <AccessKey> accessKeys = new ArrayList<>();
 
+        if (responseUnit.isPresent()) {
+            Unit unit = responseUnit.get();
+            for(int i = 0; i < unit.getMaxUsers(); i++) {
+                AccessKey accessKey = new AccessKey();
+                accessKey.setAccessCode(Long.toString(i));
+                accessKey.setUnit(unit);
+                accessKeys.add(accessKey);
+
+                accessKeyRepository.save(accessKey);
+            }
+            return new ResponseEntity<List<AccessKey>>(accessKeys, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    };
 
     //DELETE
 
