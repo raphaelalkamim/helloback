@@ -13,32 +13,36 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 @Table(name = "channel")
 public class Channel {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "channel_sequence")
-    private long id;
-    
-    @Column(nullable=false)
+    private Long id;
+
+    @Column(nullable = false)
     @NotBlank(message = "Nome não pode ser nulo")
     private String name;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     @NotBlank(message = "Descrição não pode ser nulo")
     private String description;
-    
-    @OneToMany(mappedBy = "channel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Post> posts;
-    
 
-    public Channel() {}
+    // @OneToMany(mappedBy = "channel", fetch = FetchType.LAZY, cascade =
+    // CascadeType.ALL)
+    // private List<Post> posts;
 
-    public long getId() {
+    public Channel() {
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -58,14 +62,12 @@ public class Channel {
         this.description = description;
     }
 
-    public List<Post> getPosts() {
-        return posts;
-    }
+    // public List<Post> getPosts() {
+    // return posts;
+    // }
 
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
-    }
+    // public void setPosts(List<Post> posts) {
+    // this.posts = posts;
+    // }
 
 }
-
-

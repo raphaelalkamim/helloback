@@ -1,6 +1,9 @@
 package br.hello.helloback.controller;
 
+import br.hello.helloback.entity.Channel;
 import br.hello.helloback.entity.Post;
+
+import org.hibernate.annotations.SourceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,7 @@ import java.util.*;
 
 import javax.validation.Valid;
 
+import br.hello.helloback.repository.ChannelRepository;
 import br.hello.helloback.repository.PostRepository;
 
 @RestController
@@ -21,12 +25,30 @@ public class PostController {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private ChannelRepository channelRepository;
+
     // GET ALL
 
     @RequestMapping(value = "/posts", method = RequestMethod.GET)
     public List<Post> getAll() {
         return postRepository.findAll();
     };
+
+    // GET ALL POSTS BY CHANNEL
+
+    @RequestMapping(value = "channels/{id}/posts", method = RequestMethod.GET)
+    public List<Post> getAllPostsChannel(@PathVariable(value = "id") Long id) {
+        List<Post> posts = new ArrayList<>();
+        postRepository.findByChannelId(id).forEach(posts::add);
+        return posts;
+        // if (response.size() != 0) {
+        // return new ResponseEntity<Post>(response.get(0), HttpStatus.OK);
+        // } else {
+        // return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        // }
+
+    }
 
     // GET ONE
 
@@ -43,9 +65,23 @@ public class PostController {
 
     // POST
 
-    @RequestMapping(value = "/posts", method = RequestMethod.POST)
-    public Post createUnit(@Valid @RequestBody Post post) {
-        return postRepository.save(post);
+    @RequestMapping(value = "/channels/{channelId}/posts", method = RequestMethod.POST)
+    public ResponseEntity<Post> createUnit(@Valid @RequestBody Post post,
+            @PathVariable(value = "channelId") Long channelId) {
+        Optional<Channel> response = channelRepository.findById(channelId);
+        if (response.isPresent()) {
+            post.setChannel(response.get());
+            return new ResponseEntity<Post>(postRepository.save(post), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Optional<Channel> response = channelRepository.findById(channelId);
+        // System.out.println(response);
+        // if (response.isPresent()) {
+        // post.setChannel(response.get());
+        // }
+        // return postRepository.save(post);
     };
 
     // DELETE

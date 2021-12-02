@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
-
 import javax.validation.Valid;
 
 import br.hello.helloback.repository.ChannelRepository;
@@ -34,7 +33,7 @@ public class ChannelController {
     // GET ONE
 
     @RequestMapping(value = "/channels/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Channel> getChannelByID(@PathVariable(value = "id") long id) {
+    public ResponseEntity<Channel> getChannelByID(@PathVariable(value = "id") Long id) {
         Optional<Channel> response = channelRepository.findById(id);
         if (response.isPresent()) {
             return new ResponseEntity<Channel>(response.get(), HttpStatus.OK);
@@ -47,10 +46,10 @@ public class ChannelController {
     // POST
 
     @RequestMapping(value = "/channels", method = RequestMethod.POST)
-    public ResponseEntity<Channel> createChannel(@Valid @RequestBody Channel channel, BindingResult bidingResult) throws BadHttpRequest {
+    public ResponseEntity<Channel> createChannel(@Valid @RequestBody Channel channel, BindingResult bidingResult) {
         if (bidingResult.hasErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            //TODO: Melhorar resposta (LUCA)
+            // TODO: Melhorar resposta (LUCA)
         }
         return new ResponseEntity<Channel>(channelRepository.save(channel), (HttpStatus.CREATED));
     };

@@ -10,36 +10,38 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 @Table(name = "post")
 public class Post {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_sequence")
+    private Long id;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String content;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String creationTime;
 
     private String editionTime;
-    
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name="channel_id", nullable = false)
+    @JoinColumn(name = "channel_id", nullable = false)
     private Channel channel;
 
     public Post() {
 
     }
 
-
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
