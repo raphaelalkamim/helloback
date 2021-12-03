@@ -21,45 +21,61 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    //GET ALL
+    // GET ALL
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public List<User> getAllUsers() { 
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     };
 
-
-    //GET ONE
+    // GET ONE
 
     @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
-    public ResponseEntity<User> getUserByID(@PathVariable(value = "id") long id) { 
+    public ResponseEntity<User> getUserByID(@PathVariable(value = "id") long id) {
         Optional<User> response = userRepository.findById(id);
         if (response.isPresent()) {
             return new ResponseEntity<User>(response.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        
+
     }
 
-    //POST
+    // GET - LOGIN VALIDATION
+
+    @RequestMapping(value = "/users/{email}/{password}", method = RequestMethod.GET)
+    public ResponseEntity<User> getValidationUser(@PathVariable(value = "email") String email,
+            @PathVariable(value = "password") String password) {
+        Optional<User> response = userRepository.findByEmail(email);
+        if (response.isPresent()) {
+            if (response.get().getPassword().equals(password)) {
+                return new ResponseEntity<User>(response.get(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            }
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+    }
+
+    // POST
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) { 
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             return new ResponseEntity<User>(HttpStatus.CONFLICT);
 
         } else {
             return new ResponseEntity<User>(userRepository.save(user), HttpStatus.OK);
         }
-    
+
     };
 
-
-    //DELETE
+    // DELETE
 
     @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<User> deleteUserByID(@PathVariable(value = "id") long id) { 
+    public ResponseEntity<User> deleteUserByID(@PathVariable(value = "id") long id) {
         Optional<User> response = userRepository.findById(id);
         if (response.isPresent()) {
             userRepository.delete(response.get());
@@ -69,10 +85,10 @@ public class UserController {
         }
     };
 
-    //PUT
+    // PUT
 
     @RequestMapping(value = "/users/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<User> putByID(@PathVariable(value = "id") long id, @Valid @RequestBody User newUser) { 
+    public ResponseEntity<User> putByID(@PathVariable(value = "id") long id, @Valid @RequestBody User newUser) {
         Optional<User> response = userRepository.findById(id);
         if (response.isPresent()) {
             User user = response.get();
@@ -80,14 +96,12 @@ public class UserController {
             user.setEmail(newUser.getEmail());
             user.setPassword(newUser.getPassword());
             userRepository.save(user);
-            
-            
+
             return new ResponseEntity<User>(user, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        
-    }
 
+    }
 
 }
