@@ -2,6 +2,7 @@ package br.hello.helloback.controller;
 
 import br.hello.helloback.entity.AccessKey;
 import br.hello.helloback.entity.Unit;
+import br.hello.helloback.entity.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,56 +32,72 @@ public class AccessKeyController {
     @Autowired
     private UserRepository userRepository;
 
-    //GET ALL
+    // GET ALL
 
     @RequestMapping(value = "/accessKeys", method = RequestMethod.GET)
-    public List<AccessKey> getAll() { 
+    public List<AccessKey> getAll() {
         return accessKeyRepository.findAll();
     };
 
-
-    //GET ONE
+    // GET ONE
 
     @RequestMapping(value = "/accessKeys/{id}", method = RequestMethod.GET)
-    public ResponseEntity<AccessKey> getAccessKeyByID(@PathVariable(value = "id") long id) { 
+    public ResponseEntity<AccessKey> getAccessKeyByID(@PathVariable(value = "id") long id) {
         Optional<AccessKey> response = accessKeyRepository.findById(id);
         if (response.isPresent()) {
             return new ResponseEntity<AccessKey>(response.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        
+
     }
 
-    //POST
+    // GET ACCESSKEY WITH USER
+
+    @RequestMapping(value = "users/{userId}/accessKeys", method = RequestMethod.GET)
+    public ResponseEntity<AccessKey> getAccessKeyFromUserByID(@PathVariable(value = "userId") long userId) {
+        Optional<AccessKey> response = accessKeyRepository.findByUserId(userId);
+        if (response.isPresent()) {
+            return new ResponseEntity<AccessKey>(response.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+    }
+
+    // POST
 
     @RequestMapping(value = "units/{unitId}/accessKeys", method = RequestMethod.POST)
     public ResponseEntity<List<AccessKey>> createPost(
-            @PathVariable(value = "unitId") Long unitId)
-             {
+            @PathVariable(value = "unitId") Long unitId) {
         Optional<Unit> responseUnit = unitRepository.findById(unitId);
-        List <AccessKey> accessKeys = new ArrayList<>();
+        List<AccessKey> accessKeys = new ArrayList<>();
 
         if (responseUnit.isPresent()) {
-            Unit unit = responseUnit.get();
-            for(int i = 0; i < unit.getMaxUsers(); i++) {
-                AccessKey accessKey = new AccessKey();
-                accessKey.setAccessCode(Long.toString(i));
-                accessKey.setUnit(unit);
-                accessKeys.add(accessKey);
+            if (accessKeyRepository.findByUnitId(unitId).isEmpty()) {
+                Unit unit = responseUnit.get();
+                for (int i = 0; i < unit.getMaxUsers(); i++) {
+                    AccessKey accessKey = new AccessKey();
+                    accessKey.setAccessCode(unit.getName() + Long.toString(i));
+                    accessKey.setUnit(unit);
+                    accessKeys.add(accessKey);
 
-                accessKeyRepository.save(accessKey);
+                    accessKeyRepository.save(accessKey);
+                }
+                return new ResponseEntity<List<AccessKey>>(accessKeys, HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
-            return new ResponseEntity<List<AccessKey>>(accessKeys, HttpStatus.OK);
+
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     };
 
-    //DELETE
+    // DELETE
 
     @RequestMapping(value = "/accessKeys/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<AccessKey> deleteChannelByID(@PathVariable(value = "id") long id) { 
+    public ResponseEntity<AccessKey> deleteChannelByID(@PathVariable(value = "id") long id) {
         Optional<AccessKey> response = accessKeyRepository.findById(id);
         if (response.isPresent()) {
             accessKeyRepository.delete(response.get());
@@ -90,22 +107,43 @@ public class AccessKeyController {
         }
     };
 
-    //PUT
+    // PUT
 
     @RequestMapping(value = "/accessKeys/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<AccessKey> putChannelByID(@PathVariable(value = "id") long id, @Valid @RequestBody AccessKey newAccessKey) { 
+    public ResponseEntity<AccessKey> putChannelByID(@PathVariable(value = "id") long id,
+            @Valid @RequestBody AccessKey newAccessKey) {
         Optional<AccessKey> response = accessKeyRepository.findById(id);
         if (response.isPresent()) {
             AccessKey accessKey = response.get();
             accessKey.setAccessCode(newAccessKey.getAccessCode());
             accessKeyRepository.save(accessKey);
-            
+
             return new ResponseEntity<AccessKey>(accessKey, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        
+
     }
 
+    // PUT USER USED ACCESSCODE
+
+    @RequestMapping(value = "users/{userId}/accessKeys/{accessKeyCode}", method = RequestMethod.PUT)
+    public ResponseEntity<AccessKey> putAccessKeyUser(@PathVariable(value = "accessKeyCode") String accessKeyCode,
+            @PathVariable(value = "userId") Long userId) {
+        Optional<AccessKey> responseKey = accessKeyRepository.findByAccessCode(accessKeyCode);
+        Optional<User> responseUser = userRepository.findById(userId);
+        if (responseKey.isPresent() && responseUser.isPresent()) {
+            AccessKey accessKey = responseKey.get();
+            if (accessKey.getUser() != null) {
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
+            }
+            accessKey.setUser(responseUser.get());
+            accessKeyRepository.save(accessKey);
+            return new ResponseEntity<AccessKey>(accessKey, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+    }
 
 }

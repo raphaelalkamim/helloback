@@ -21,8 +21,8 @@ public class AccessKey {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accessKey_sequence")
     private long id;
-    
-    @Column(nullable = false)
+
+    @Column(nullable = false, unique = true)
     @NotBlank(message = "accessCode não pode ser nulo")
     private String accessCode;
 
@@ -70,5 +70,3 @@ public class AccessKey {
         this.user = user;
     }
 }
-
-
