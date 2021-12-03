@@ -22,6 +22,16 @@ public class Role {
     @NotBlank(message = "AccessLevel não pode ser nulo")
     private String accessLevel;
 
+
+    public Role() {}
+
+    public Role(Long id, String accessLevel) {
+        this.id = id;
+        this.accessLevel = accessLevel;
+
+    }
+
+
     public Long getId() {
         return id;
     }
