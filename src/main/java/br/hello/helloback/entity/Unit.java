@@ -42,13 +42,13 @@ public class Unit {
     @OneToMany(mappedBy = "unitMother", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Unit> units;
-
-    @OneToMany(mappedBy = "unit", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    
     @JsonIgnore
+    @OneToMany(mappedBy = "unit", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<AccessKey> accessKey;
 
+    
     @OneToMany(mappedBy = "unit", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonIgnore
     private Set<Channel> channel;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
