@@ -21,35 +21,34 @@ public class UnitController {
     @Autowired
     private UnitRepository unitRepository;
 
-    //GET ALL
+    // GET ALL
 
     @RequestMapping(value = "/units", method = RequestMethod.GET)
-    public List<Unit> getAll() { 
+    public List<Unit> getAll() {
         return unitRepository.findAll();
     };
 
-
-    //GET ONE
+    // GET ONE
 
     @RequestMapping(value = "/units/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Unit> getByID(@PathVariable(value = "id") long id) { 
+    public ResponseEntity<Unit> getByID(@PathVariable(value = "id") long id) {
         Optional<Unit> response = unitRepository.findById(id);
         if (response.isPresent()) {
             return new ResponseEntity<Unit>(response.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        
+
     }
 
-    //POST MOTHER
+    // POST MOTHER
 
     @RequestMapping(value = "/unitMother", method = RequestMethod.POST)
-    public Unit createUnit(@Valid @RequestBody Unit unitMother) { 
+    public Unit createUnit(@Valid @RequestBody Unit unitMother) {
         return unitRepository.save(unitMother);
     };
 
-    //POST DAUGTHER
+    // POST DAUGTHER
 
     @RequestMapping(value = "/unitMother/{unitMotherId}/units", method = RequestMethod.POST)
     public ResponseEntity<Unit> createChannel(@Valid @RequestBody Unit unit,
@@ -63,11 +62,10 @@ public class UnitController {
         }
     };
 
-
-    //DELETE
+    // DELETE
 
     @RequestMapping(value = "/units/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Unit> deleteByID(@PathVariable(value = "id") long id) { 
+    public ResponseEntity<Unit> deleteByID(@PathVariable(value = "id") long id) {
         Optional<Unit> response = unitRepository.findById(id);
         if (response.isPresent()) {
             unitRepository.delete(response.get());
@@ -77,10 +75,10 @@ public class UnitController {
         }
     };
 
-    //PUT
+    // PUT
 
     @RequestMapping(value = "/units/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Unit> putByID(@PathVariable(value = "id") long id, @Valid @RequestBody Unit newUnit) { 
+    public ResponseEntity<Unit> putByID(@PathVariable(value = "id") long id, @Valid @RequestBody Unit newUnit) {
         Optional<Unit> response = unitRepository.findById(id);
         if (response.isPresent()) {
             Unit unit = response.get();
@@ -88,14 +86,12 @@ public class UnitController {
             unit.setDescription(newUnit.getDescription());
             unit.setMaxUsers(newUnit.getMaxUsers());
             unitRepository.save(unit);
-            
-            
+
             return new ResponseEntity<Unit>(unit, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        
-    }
 
+    }
 
 }

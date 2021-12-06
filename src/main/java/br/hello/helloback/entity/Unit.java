@@ -1,5 +1,8 @@
 package br.hello.helloback.entity;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,10 +11,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -34,9 +39,12 @@ public class Unit {
     @PositiveOrZero(message = "MaxUsers não pode ser negativo")
     private Long maxUsers;
 
+    @OneToMany(mappedBy = "unitMother", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Unit> units;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "unit_id", nullable = true)
-    //@JsonIgnore
     private Unit unitMother;
 
     public Unit() {
@@ -83,4 +91,7 @@ public class Unit {
         this.unitMother = unitMother;
     }
 
+    public Set<Unit> getUnits() {
+        return units;
+    }
 }
