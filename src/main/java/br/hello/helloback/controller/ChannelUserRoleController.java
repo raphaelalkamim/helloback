@@ -102,36 +102,37 @@ public class ChannelUserRoleController {
         }
     };
 
-    // // DELETE
+    // DELETE
 
-    // @RequestMapping(value = "/channels/{id}", method = RequestMethod.DELETE)
-    // public ResponseEntity<Channel> deleteChannelByID(@PathVariable(value = "id") Long id) {
-    //     Optional<Channel> response = channelRepository.findById(id);
-    //     if (response.isPresent()) {
-    //         channelRepository.delete(response.get());
-    //         return new ResponseEntity<>(HttpStatus.OK);
-    //     } else {
-    //         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    //     }
-    // };
+    @RequestMapping(value = "/CURLink/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<ChannelUserRole> deleteLinkByID(@PathVariable(value = "id") Long id) {
+        Optional<ChannelUserRole> response = channelUserRoleRepository.findById(id);
+        if (response.isPresent()) {
+            channelUserRoleRepository.delete(response.get());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    };
 
-    // // PUT
+    // PUT
 
-    // @RequestMapping(value = "/channels/{id}", method = RequestMethod.PUT)
-    // public ResponseEntity<Channel> putChannelByID(@PathVariable(value = "id") Long id,
-    //         @Valid @RequestBody Channel newChannel) {
-    //     Optional<Channel> response = channelRepository.findById(id);
-    //     if (response.isPresent()) {
-    //         Channel channel = response.get();
-    //         channel.setName(newChannel.getName());
-    //         channel.setDescription(newChannel.getDescription());
-    //         channelRepository.save(channel);
+    @RequestMapping(value = "/CURLink/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<ChannelUserRole> putLinkByID(@PathVariable(value = "id") Long id,
+            @Valid @RequestBody ChannelUserRole newChannelUserRole) {
+        Optional<ChannelUserRole> response = channelUserRoleRepository.findById(id);
+        if (response.isPresent()) {
+            ChannelUserRole channelUserRole = response.get();
+            channelUserRole.setRole(newChannelUserRole.getRole());
+            channelUserRole.setChannel(newChannelUserRole.getChannel());
+            channelUserRole.setUser(newChannelUserRole.getUser());
+            channelUserRoleRepository.save(channelUserRole);
 
-    //         return new ResponseEntity<Channel>(channel, HttpStatus.OK);
-    //     } else {
-    //         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    //     }
+            return new ResponseEntity<ChannelUserRole>(channelUserRole, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
-    // }
+    }
 
 }
