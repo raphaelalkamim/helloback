@@ -90,7 +90,7 @@ public class ChannelUserRoleController {
         Optional<Role> responseRole = roleRepository.findById(roleId);
         Optional<ChannelUserRole> responseCURLink = channelUserRoleRepository.findByUserIdAndChannelId(userId, channelId);
 
-        if (responseCURLink.isPresent()) {
+        if (!responseCURLink.isPresent()) {
             if (responseUser.isPresent() && responseChannel.isPresent() && responseRole.isPresent()) {
                 ChannelUserRole newCURLink = new ChannelUserRole();
                 newCURLink.setRole(responseRole.get());

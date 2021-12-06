@@ -1,13 +1,19 @@
 package br.hello.helloback.entity;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -34,6 +40,18 @@ public class User {
     @NotBlank(message = "domain não pode ser nulo")
     private String domain;
     
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<AccessKey> accessKey;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Post> post;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<ChannelUserRole> channelUserRole;
 
     public Long getId() {
         return id;
@@ -75,8 +93,17 @@ public class User {
         this.domain = domain;
     }
     
+    public Set<AccessKey> getAccessKey() {
+        return accessKey;
+    }
 
+    public Set<Post> getPost() {
+        return post;
+    }
 
+    public Set<ChannelUserRole> getChannelUserRole() {
+        return channelUserRole;
+    }
 
 }
 

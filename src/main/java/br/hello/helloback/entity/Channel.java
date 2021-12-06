@@ -43,6 +43,10 @@ public class Channel {
     @OneToMany(mappedBy = "channel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Post> posts;
 
+    @OneToMany(mappedBy = "channel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<ChannelUserRole> channelUserRole;
+
     public Channel() {
     }
 
@@ -82,8 +86,8 @@ public class Channel {
         return posts;
     }
 
-    public void setPosts(Set<Post> posts) {
-        this.posts = posts;
+    public Set<ChannelUserRole> getChannelUserRole() {
+        return channelUserRole;
     }
 
 }
