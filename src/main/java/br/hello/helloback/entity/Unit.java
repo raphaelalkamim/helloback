@@ -43,6 +43,14 @@ public class Unit {
     @JsonIgnore
     private Set<Unit> units;
 
+    @OneToMany(mappedBy = "unit", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<AccessKey> accessKey;
+
+    @OneToMany(mappedBy = "unit", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Channel> channel;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "unit_id", nullable = true)
     private Unit unitMother;
@@ -93,5 +101,13 @@ public class Unit {
 
     public Set<Unit> getUnits() {
         return units;
+    }
+
+    public Set<AccessKey> getAccessKey() {
+        return accessKey;
+    }
+
+    public Set<Channel> getChannels() {
+        return channel;
     }
 }
