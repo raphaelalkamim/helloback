@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import javax.validation.Valid;
@@ -70,13 +72,16 @@ public class PostController {
 
     @RequestMapping(value = "/channels/{channelId}/users/{userID}/posts", method = RequestMethod.POST)
     public ResponseEntity<Post> createPost(@Valid @RequestBody Post post,
-            @PathVariable(value = "channelId") Long channelId, 
-            @PathVariable(value = "userID") Long userId)
-             {
+            @PathVariable(value = "channelId") Long channelId,
+            @PathVariable(value = "userID") Long userId) {
         Optional<Channel> responseChannel = channelRepository.findById(channelId);
         Optional<User> responseUser = userRepository.findById(userId);
-        
+
         if (responseChannel.isPresent() && responseUser.isPresent()) {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            post.setCreationTime(dtf.format(now));
+            post.setEditionTime(dtf.format(now));
             post.setChannel(responseChannel.get());
             post.setUser(responseUser.get());
             return new ResponseEntity<Post>(postRepository.save(post), HttpStatus.OK);
@@ -104,9 +109,11 @@ public class PostController {
     public ResponseEntity<Post> putByID(@PathVariable(value = "id") Long id, @Valid @RequestBody Post newPost) {
         Optional<Post> response = postRepository.findById(id);
         if (response.isPresent()) {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
             Post post = response.get();
             post.setContent(newPost.getContent());
-            post.setEditionTime(newPost.getEditionTime());
+            post.setEditionTime(dtf.format(now));
             postRepository.save(post);
 
             return new ResponseEntity<Post>(post, HttpStatus.OK);
@@ -115,7 +122,6 @@ public class PostController {
         }
 
     }
-
 
     public void notificationPost() {
 
