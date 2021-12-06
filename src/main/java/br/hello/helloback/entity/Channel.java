@@ -1,6 +1,7 @@
 package br.hello.helloback.entity;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -39,9 +40,8 @@ public class Channel {
     @JsonIgnore
     private Unit unit;
 
-    // @OneToMany(mappedBy = "channel", fetch = FetchType.LAZY, cascade =
-    // CascadeType.ALL)
-    // private List<Post> posts;
+    @OneToMany(mappedBy = "channel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Post> posts;
 
     public Channel() {
     }
@@ -78,12 +78,12 @@ public class Channel {
         this.unit = unit;
     }
 
-    // public List<Post> getPosts() {
-    // return posts;
-    // }
+    public Set<Post> getPosts() {
+        return posts;
+    }
 
-    // public void setPosts(List<Post> posts) {
-    // this.posts = posts;
-    // }
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
+    }
 
 }
