@@ -116,4 +116,9 @@ public class PostController {
 
     }
 
+
+    public void notificationPost() {
+
+    }
+
 }

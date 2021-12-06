@@ -18,7 +18,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_sequence")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @NotBlank(message = "AccessLevel não pode ser nulo")
     private String accessLevel;
 

@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.Table;
 
@@ -20,10 +21,13 @@ public class ChannelUserRole {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     
+
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
     @JoinColumn(name = "channel_id", nullable = false)
     private Channel channel;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

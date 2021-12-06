@@ -79,27 +79,33 @@ public class ChannelUserRoleController {
 
     // POST
 
-    @RequestMapping(value = "/channels/{channelId}/users/{userID}/roles/{roleId}/CURLink", method = RequestMethod.POST)
+    @RequestMapping(value = "/channels/{channelId}/users/{userId}/roles/{roleId}/CURLink", method = RequestMethod.POST)
     public ResponseEntity<ChannelUserRole> postRoleUserChannel(
         @PathVariable(value = "channelId") Long channelId,
-        @PathVariable(value = "userID") Long userId,
-        @PathVariable(value = "roleID") Long roleId) {
+        @PathVariable(value = "userId") Long userId,
+        @PathVariable(value = "roleId") Long roleId) {
 
         Optional<User> responseUser = userRepository.findById(userId);
         Optional<Channel> responseChannel = channelRepository.findById(channelId);
         Optional<Role> responseRole = roleRepository.findById(roleId);
-        
-        if (responseUser.isPresent() && responseChannel.isPresent() && responseRole.isPresent()) {
-            ChannelUserRole newCURLink = new ChannelUserRole();
-            newCURLink.setRole(responseRole.get());
-            newCURLink.setUser(responseUser.get());
-            newCURLink.setChannel(responseChannel.get());
-            return new ResponseEntity<ChannelUserRole>(channelUserRoleRepository.save(newCURLink), HttpStatus.OK);
+        Optional<ChannelUserRole> responseCURLink = channelUserRoleRepository.findByUserIdAndChannelId(userId, channelId);
 
+        if (responseCURLink.isPresent()) {
+            if (responseUser.isPresent() && responseChannel.isPresent() && responseRole.isPresent()) {
+                ChannelUserRole newCURLink = new ChannelUserRole();
+                newCURLink.setRole(responseRole.get());
+                newCURLink.setUser(responseUser.get());
+                newCURLink.setChannel(responseChannel.get());
+                return new ResponseEntity<ChannelUserRole>(channelUserRoleRepository.save(newCURLink), HttpStatus.OK);
+    
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    
+            }
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
+        
     };
 
     // DELETE
