@@ -1,6 +1,10 @@
 package br.hello.helloback.controller;
 
+import br.hello.helloback.dto.UnitDTO;
+import br.hello.helloback.entity.AccessKey;
 import br.hello.helloback.entity.Unit;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +18,16 @@ import java.util.*;
 
 import javax.validation.Valid;
 
+import br.hello.helloback.repository.AccessKeyRepository;
 import br.hello.helloback.repository.UnitRepository;
 
 @RestController
 public class UnitController {
     @Autowired
     private UnitRepository unitRepository;
+
+    @Autowired
+    private AccessKeyRepository accessKeyRepository;
 
     // GET ALL
 
@@ -35,6 +43,36 @@ public class UnitController {
         Optional<Unit> response = unitRepository.findById(id);
         if (response.isPresent()) {
             return new ResponseEntity<Unit>(response.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+    }
+
+    // GET Units from USER by accessKeys
+
+    @RequestMapping(value = "users/{userId}/units", method = RequestMethod.GET)
+    public ResponseEntity<List<UnitDTO>> getUnits(@PathVariable(value = "userId") long userId) {
+        Optional<AccessKey> response = accessKeyRepository.findByUserId(userId);
+        List<Unit> units = new ArrayList<>();
+        ArrayList<UnitDTO> retorno = new ArrayList<UnitDTO>();
+        ModelMapper modelMapper = new ModelMapper();
+        if (response.isPresent()) {
+            Unit unit = response.get().getUnit();
+            units.add(unit);
+            while (true) {
+                if (unit.getUnitMother() != null) {
+                    units.add(unit.getUnitMother());
+                    unit = unit.getUnitMother();
+                } else {
+                    break;
+                }
+            }
+            for (Unit unitItem : units) {
+                UnitDTO unitDTO = modelMapper.map(unitItem, UnitDTO.class);
+                retorno.add(unitDTO);
+            }
+            return new ResponseEntity<List<UnitDTO>>(retorno, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

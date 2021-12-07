@@ -1,8 +1,10 @@
 package br.hello.helloback.controller;
 
+import br.hello.helloback.dto.ChannelDTO;
 import br.hello.helloback.entity.Channel;
 import br.hello.helloback.entity.Unit;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,11 +40,17 @@ public class ChannelController {
     // GET ALL CHANNELS BY UNIT
 
     @RequestMapping(value = "units/{id}/channels", method = RequestMethod.GET)
-    public ResponseEntity<List<Channel>> getAllPostsChannel(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<List<ChannelDTO>> getAllPostsChannel(@PathVariable(value = "id") Long id) {
         List<Channel> channels = new ArrayList<>();
+        ArrayList<ChannelDTO> retorno = new ArrayList<ChannelDTO>();
+        ModelMapper modelMapper = new ModelMapper();
         if (unitRepository.findById(id).isPresent()) {
             channelRepository.findByUnitId(id).forEach(channels::add);
-            return new ResponseEntity<List<Channel>>(channels, HttpStatus.OK);
+            for (Channel channelItem : channels) {
+                ChannelDTO channelDTO = modelMapper.map(channelItem, ChannelDTO.class);
+                retorno.add(channelDTO);
+            }
+            return new ResponseEntity<List<ChannelDTO>>(retorno, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
