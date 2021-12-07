@@ -2,13 +2,14 @@ package br.hello.helloback.entity;
 
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.databind.Module.SetupContext;
+
 public class Notification {
     String content;
     String channelName;
-    ArrayList <String> users;
+    ArrayList<String> usersDomains;
 
-
-    Notification() { 
+    public Notification() {
 
     }
 
@@ -20,10 +21,6 @@ public class Notification {
         return channelName;
     }
 
-    public ArrayList<String> getUsers() {
-        return users;
-    }
-
     public void setContent(String content) {
         this.content = content;
     }
@@ -32,9 +29,12 @@ public class Notification {
         this.channelName = channelName;
     }
 
-    public void setUsers(ArrayList<String> users) {
-        this.users = users;
+    public ArrayList<String> getUsersDomains() {
+        return usersDomains;
     }
 
-    
+    public void setUsersDomains(ArrayList<String> usersDomains) {
+        this.usersDomains = usersDomains;
+    }
+
 }

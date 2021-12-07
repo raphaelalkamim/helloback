@@ -4,6 +4,7 @@ import br.hello.helloback.dto.PostDTO;
 import br.hello.helloback.dto.UserDTO;
 import br.hello.helloback.entity.AccessKey;
 import br.hello.helloback.entity.Channel;
+import br.hello.helloback.entity.Notification;
 import br.hello.helloback.entity.Post;
 import br.hello.helloback.entity.Unit;
 import br.hello.helloback.entity.User;
@@ -87,7 +88,7 @@ public class PostController {
     // POST
 
     @RequestMapping(value = "/channels/{channelId}/users/{userID}/posts", method = RequestMethod.POST)
-    public ResponseEntity<PostDTO> createPost(@Valid @RequestBody Post post,
+    public ResponseEntity<Notification> createPost(@Valid @RequestBody Post post,
             @PathVariable(value = "channelId") Long channelId,
             @PathVariable(value = "userID") Long userId) {
         Optional<Channel> responseChannel = channelRepository.findById(channelId);
@@ -103,8 +104,12 @@ public class PostController {
             postRepository.save(post);
             PostDTO postDTO = modelMapper.map(post, PostDTO.class);
             postDTO.setUser(modelMapper.map(post.getUser(), UserDTO.class));
-            // System.out.println(notificationPost(responseChannel.get()));
-            return new ResponseEntity<PostDTO>(postDTO, HttpStatus.OK);
+
+            Notification notification = new Notification();
+            notification.setChannelName(responseChannel.get().getName());
+            notification.setContent(post.getContent());
+            notification.setUsersDomains(notificationPost(responseChannel.get()));
+            return new ResponseEntity<Notification>(notification, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -143,15 +148,15 @@ public class PostController {
 
     }
 
-    public List<String> notificationPost(Channel channel) {
+    public ArrayList<String> notificationPost(Channel channel) {
         Unit unit = channel.getUnit();
-        List<String> codesDomain = new ArrayList<>();
+        ArrayList<String> codesDomain = new ArrayList<>();
         getChildren(unit, codesDomain);
         return codesDomain;
     }
 
     public void getChildren(Unit unit, List<String> list) {
-        Set<Unit> children = unit.getUnits();
+        List<Unit> children = new ArrayList<>(unit.getUnits());
         List<AccessKey> chaves = accessKeyRepository.findByUnitId(unit.getId());
 
         for (int j = 0; j < chaves.size(); j++) {
@@ -160,11 +165,9 @@ public class PostController {
             }
         }
 
-        if (children == null) {
-            return;
-        } else {
-            for (int i = 0; i < unit.getUnits().size(); i++) {
-                getChildren(unit, list);
+        if (children != null) {
+            for (int i = 0; i < children.size(); i++) {
+                getChildren(children.get(i), list);
             }
         }
     }
