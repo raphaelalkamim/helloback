@@ -141,7 +141,7 @@ public class AccessKeyController {
             }
             accessKey.setUser(responseUser.get());
             accessKeyRepository.save(accessKey);
-            return new ResponseEntity<AccessKey>(accessKey, HttpStatus.OK);
+            return new ResponseEntity<AccessKey>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

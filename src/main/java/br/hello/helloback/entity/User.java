@@ -38,7 +38,7 @@ public class User {
 
     @Column(nullable = false)
     @NotBlank(message = "domain não pode ser nulo")
-    private String domain;
+    private String deviceID;
     
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -85,12 +85,12 @@ public class User {
         this.password = password;
     }
 
-    public String getDomain() {
-        return domain;
+    public String getDeviceID() {
+        return deviceID;
     }
 
-    public void setDomain(String domain) {
-        this.domain = domain;
+    public void setDeviceID(String deviceID) {
+        this.deviceID = deviceID;
     }
     
     public Set<AccessKey> getAccessKey() {

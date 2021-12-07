@@ -1,6 +1,9 @@
 package br.hello.helloback.controller;
 
+import br.hello.helloback.dto.UserIdDTO;
 import br.hello.helloback.entity.User;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,12 +47,16 @@ public class UserController {
     // GET - LOGIN VALIDATION
 
     @RequestMapping(value = "/users/{email}/{password}", method = RequestMethod.GET)
-    public ResponseEntity<User> getValidationUser(@PathVariable(value = "email") String email,
+    public ResponseEntity<UserIdDTO> getValidationUser(@PathVariable(value = "email") String email,
             @PathVariable(value = "password") String password) {
+
         Optional<User> response = userRepository.findByEmail(email);
+        ModelMapper modelMapper = new ModelMapper();
+        
         if (response.isPresent()) {
             if (response.get().getPassword().equals(password)) {
-                return new ResponseEntity<User>(response.get(), HttpStatus.OK);
+                UserIdDTO userIdDTO = modelMapper.map(response.get(), UserIdDTO.class);
+                return new ResponseEntity<UserIdDTO>(userIdDTO, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
             }
@@ -62,12 +69,17 @@ public class UserController {
     // POST
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+    public ResponseEntity<UserIdDTO> createUser(@Valid @RequestBody User user) {
+
+        ModelMapper modelMapper = new ModelMapper();
+
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            return new ResponseEntity<User>(HttpStatus.CONFLICT);
+            return new ResponseEntity<UserIdDTO>(HttpStatus.CONFLICT);
 
         } else {
-            return new ResponseEntity<User>(userRepository.save(user), HttpStatus.OK);
+            userRepository.save(user);
+            UserIdDTO userIdDTO = modelMapper.map(user, UserIdDTO.class);
+            return new ResponseEntity<UserIdDTO>(userIdDTO, HttpStatus.OK);
         }
 
     };

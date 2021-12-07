@@ -109,7 +109,7 @@ public class PostController {
             notification.setChannelName(responseChannel.get().getName());
             notification.setContent(post.getContent());
             notification.setUsersDomains(notificationPost(responseChannel.get()));
-            return new ResponseEntity<Notification>(notification, HttpStatus.OK);
+            return new ResponseEntity<Notification>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -161,7 +161,7 @@ public class PostController {
 
         for (int j = 0; j < chaves.size(); j++) {
             if (chaves.get(j).getUser() != null) {
-                list.add(chaves.get(j).getUser().getDomain());
+                list.add(chaves.get(j).getUser().getDeviceID());
             }
         }
 
