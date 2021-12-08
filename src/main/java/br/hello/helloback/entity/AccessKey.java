@@ -28,7 +28,7 @@ public class AccessKey {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "user_account_id", nullable = true)
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
