@@ -42,7 +42,6 @@ public class User {
     
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonIgnore
     private Set<AccessKey> accessKey;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -50,7 +49,6 @@ public class User {
     private Set<Post> post;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonIgnore
     private Set<ChannelUserRole> channelUserRole;
 
     public Long getId() {
