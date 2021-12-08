@@ -29,7 +29,7 @@ public class ChannelUserRole {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_account_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
