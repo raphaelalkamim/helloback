@@ -82,14 +82,14 @@ public class PostController {
             Unit unit = response.get().getUnit();
             Post lastPost = findRecentByUnit(unit);
 
-            // while (unit != null) {
-            //     Post lastPostUnit = findRecentByUnit(unit);
+            while (unit != null) {
+                Post lastPostUnit = findRecentByUnit(unit);
                 
-            //     if (lastPostUnit.getId() > lastPost.getId()) {
-            //         lastPost = lastPostUnit;
-            //     }
-            //     unit = unit.getUnitMother();
-            // }
+                if (lastPostUnit.getId().longValue() > lastPost.getId().longValue()) {
+                    lastPost = lastPostUnit;
+                }
+                unit = unit.getUnitMother();
+            }
 
             Widget widget = new Widget();
             widget.setChannelName(lastPost.getChannel().getName());
