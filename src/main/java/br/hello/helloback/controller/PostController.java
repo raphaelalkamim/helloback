@@ -210,9 +210,10 @@ public class PostController {
         for (int i = 0; i < channels.size(); i++) {
             List<Post> posts = new ArrayList<>(channels.get(i).getPosts());
             if (posts.size() > 0) {
-                Post lastPost = posts.get(posts.size() - 1);
-                if (lastPost.getId().longValue() > post.getId().longValue()) {
-                    post = lastPost;
+                for (int j = 0; j < posts.size(); j++) {
+                    if (posts.get(j).getId().longValue() > post.getId().longValue()) {
+                        post = posts.get(j);
+                    }
                 }
             }
         }
