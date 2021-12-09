@@ -73,7 +73,7 @@ public class PostController {
 
     }
 
-    //GET WIDGET
+    // GET WIDGET
 
     @RequestMapping(value = "users/{userId}/lastPost", method = RequestMethod.GET)
     public ResponseEntity<Widget> getWidget(@PathVariable(value = "userId") Long userId) {
@@ -82,15 +82,16 @@ public class PostController {
             Unit unit = response.get().getUnit();
             Post lastPost = findRecentByUnit(unit);
 
-            while (unit != null) {
-                Post lastPostUnit = findRecentByUnit(unit);
-                
-                if (lastPostUnit.getId().longValue() > lastPost.getId().longValue()) {
-                    lastPost = lastPostUnit;
-                }
-                unit = unit.getUnitMother();
-            }
-
+            /*
+             * while (unit != null) {
+             * Post lastPostUnit = findRecentByUnit(unit);
+             * 
+             * if (lastPostUnit.getId().longValue() > lastPost.getId().longValue()) {
+             * lastPost = lastPostUnit;
+             * }
+             * unit = unit.getUnitMother();
+             * }
+             */
             Widget widget = new Widget();
             widget.setChannelName(lastPost.getChannel().getName());
             widget.setContent(lastPost.getContent());
@@ -101,8 +102,6 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-
 
     // GET ONE
 
@@ -207,14 +206,14 @@ public class PostController {
     public Post findRecentByUnit(Unit unit) {
         List<Channel> channels = new ArrayList<>(unit.getChannels());
         Post post = new Post();
-        post.setId(new Long(0));
-        
-        for (int i=0; i<channels.size(); i++) {
+        post.setId(Long.valueOf(0));
+
+        for (int i = 0; i < channels.size(); i++) {
             List<Post> posts = new ArrayList<>(channels.get(i).getPosts());
-            Post lastPost = posts.get(posts.size() -1);
+            Post lastPost = posts.get(posts.size() - 1);
             if (lastPost.getId().longValue() > post.getId().longValue()) {
                 post = lastPost;
-            }      
+            }
         }
         return post;
     }
