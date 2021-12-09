@@ -8,6 +8,7 @@ import br.hello.helloback.entity.Notification;
 import br.hello.helloback.entity.Post;
 import br.hello.helloback.entity.Unit;
 import br.hello.helloback.entity.User;
+import br.hello.helloback.entity.Widget;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,37 @@ public class PostController {
         }
 
     }
+
+    //GET WIDGET
+
+    @RequestMapping(value = "users/{userId}/lastPost", method = RequestMethod.GET)
+    public ResponseEntity<Widget> getWidget(@PathVariable(value = "userId") Long userId) {
+        Optional<AccessKey> response = accessKeyRepository.findByUserId(userId);
+        if (response.isPresent()) {
+            Unit unit = response.get().getUnit();
+            Post lastPost = new Post();
+
+            while (unit != null) {
+                Post lastPostUnit = findRecentByUnit(unit);
+                
+                if (lastPostUnit.getId() > lastPost.getId()) {
+                    lastPost = lastPostUnit;
+                }
+                unit = unit.getUnitMother();
+            }
+
+            Widget widget = new Widget();
+            widget.setChannelName(lastPost.getChannel().getName());
+            widget.setContent(lastPost.getContent());
+
+            return new ResponseEntity<Widget>(widget, HttpStatus.OK);
+
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
 
     // GET ONE
 
@@ -170,6 +202,20 @@ public class PostController {
                 getChildren(children.get(i), list);
             }
         }
+    }
+
+    public Post findRecentByUnit(Unit unit) {
+        List<Channel> channels = new ArrayList<>(unit.getChannels());
+        Post post = new Post();
+        
+        for (int i=0; i<channels.size(); i++) {
+            List<Post> posts = new ArrayList<>(channels.get(i).getPosts());
+            Post lastPost = posts.get(posts.size() -1);
+            if (lastPost.getId() > post.getId()) {
+                post = lastPost;
+            }      
+        }
+        return post;
     }
 
 }

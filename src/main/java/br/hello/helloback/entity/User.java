@@ -41,6 +41,7 @@ public class User {
     private String deviceID;
     
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<AccessKey> accessKey;
 

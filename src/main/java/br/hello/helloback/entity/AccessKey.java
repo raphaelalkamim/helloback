@@ -26,7 +26,7 @@ public class AccessKey {
     @NotBlank(message = "accessCode não pode ser nulo")
     private String accessCode;
 
-    @JsonIgnore
+    //@JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "user_account_id", nullable = true)
     private User user;
