@@ -76,11 +76,11 @@ public class PostController {
     // GET WIDGET
 
     @RequestMapping(value = "users/{userId}/lastPost", method = RequestMethod.GET)
-    public ResponseEntity<Widget> getWidget(@PathVariable(value = "userId") Long userId) {
+    public ResponseEntity<String> getWidget(@PathVariable(value = "userId") Long userId) {
         Optional<AccessKey> response = accessKeyRepository.findByUserId(userId);
         if (response.isPresent()) {
             Unit unit = response.get().getUnit();
-            Post lastPost = findRecentByUnit(unit);
+            String lastPost = findRecentByUnit(unit);
 
             /*
              * while (unit != null) {
@@ -92,11 +92,13 @@ public class PostController {
              * unit = unit.getUnitMother();
              * }
              */
-            Widget widget = new Widget();
-            widget.setChannelName(lastPost.getChannel().getName());
-            widget.setContent(lastPost.getContent());
+            /*
+             * Widget widget = new Widget();
+             * widget.setChannelName(lastPost.getChannel().getName());
+             * widget.setContent(lastPost.getContent());
+             */
 
-            return new ResponseEntity<Widget>(widget, HttpStatus.OK);
+            return new ResponseEntity<String>(lastPost, HttpStatus.OK);
 
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -203,21 +205,23 @@ public class PostController {
         }
     }
 
-    public Post findRecentByUnit(Unit unit) {
+    public String findRecentByUnit(Unit unit) {
         List<Channel> channels = new ArrayList<>(unit.getChannels());
         Post post = new Post();
+        String saida = "";
 
         for (int i = 0; i < channels.size(); i++) {
             List<Post> posts = new ArrayList<>(channels.get(i).getPosts());
             if (posts.size() > 0) {
                 for (int j = 0; j < posts.size(); j++) {
+                    saida += posts.get(j);
                     if (posts.get(j).getId().longValue() > post.getId().longValue()) {
                         post = posts.get(j);
                     }
                 }
             }
         }
-        return post;
+        return saida;
     }
 
 }
