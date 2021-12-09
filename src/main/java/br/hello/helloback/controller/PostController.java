@@ -206,7 +206,6 @@ public class PostController {
     public Post findRecentByUnit(Unit unit) {
         List<Channel> channels = new ArrayList<>(unit.getChannels());
         Post post = new Post();
-        post.setId(Long.valueOf(0));
 
         for (int i = 0; i < channels.size(); i++) {
             List<Post> posts = new ArrayList<>(channels.get(i).getPosts());
