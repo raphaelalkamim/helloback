@@ -80,16 +80,16 @@ public class PostController {
         Optional<AccessKey> response = accessKeyRepository.findByUserId(userId);
         if (response.isPresent()) {
             Unit unit = response.get().getUnit();
-            Post lastPost = new Post();
+            Post lastPost = findRecentByUnit(unit);
 
-            while (unit != null) {
-                Post lastPostUnit = findRecentByUnit(unit);
+            // while (unit != null) {
+            //     Post lastPostUnit = findRecentByUnit(unit);
                 
-                if (lastPostUnit.getId() > lastPost.getId()) {
-                    lastPost = lastPostUnit;
-                }
-                unit = unit.getUnitMother();
-            }
+            //     if (lastPostUnit.getId() > lastPost.getId()) {
+            //         lastPost = lastPostUnit;
+            //     }
+            //     unit = unit.getUnitMother();
+            // }
 
             Widget widget = new Widget();
             widget.setChannelName(lastPost.getChannel().getName());
