@@ -207,11 +207,12 @@ public class PostController {
     public Post findRecentByUnit(Unit unit) {
         List<Channel> channels = new ArrayList<>(unit.getChannels());
         Post post = new Post();
+        post.setId(new Long(0));
         
         for (int i=0; i<channels.size(); i++) {
             List<Post> posts = new ArrayList<>(channels.get(i).getPosts());
             Post lastPost = posts.get(posts.size() -1);
-            if (lastPost.getId() > post.getId()) {
+            if (lastPost.getId().longValue() > post.getId().longValue()) {
                 post = lastPost;
             }      
         }
