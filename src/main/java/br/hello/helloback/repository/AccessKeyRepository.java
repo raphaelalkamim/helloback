@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import br.hello.helloback.entity.AccessKey;
-import br.hello.helloback.entity.User;
 
 @Repository
 public interface AccessKeyRepository extends JpaRepository<AccessKey, Long> {

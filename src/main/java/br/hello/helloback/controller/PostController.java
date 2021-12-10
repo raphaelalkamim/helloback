@@ -8,6 +8,7 @@ import br.hello.helloback.entity.Notification;
 import br.hello.helloback.entity.Post;
 import br.hello.helloback.entity.Unit;
 import br.hello.helloback.entity.User;
+import br.hello.helloback.entity.Widget;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,35 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+    }
+
+    // GET WIDGET
+
+    @RequestMapping(value = "users/{userId}/lastPost", method = RequestMethod.GET)
+    public ResponseEntity<Widget> getWidget(@PathVariable(value = "userId") Long userId) {
+        Optional<AccessKey> response = accessKeyRepository.findByUserId(userId);
+        if (response.isPresent()) {
+            Unit unit = response.get().getUnit();
+            Post lastPost = findRecentByUnit(unit);
+
+            while (unit != null) {
+                Post lastPostUnit = findRecentByUnit(unit);
+
+                if (lastPostUnit.getId().longValue() > lastPost.getId().longValue()) {
+                    lastPost = lastPostUnit;
+                }
+                unit = unit.getUnitMother();
+            }
+
+            Widget widget = new Widget();
+            widget.setChannelName(lastPost.getChannel().getName());
+            widget.setContent(lastPost.getContent());
+
+            return new ResponseEntity<Widget>(widget, HttpStatus.OK);
+
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     // GET ONE
@@ -172,4 +202,21 @@ public class PostController {
         }
     }
 
+    public Post findRecentByUnit(Unit unit) {
+        List<Channel> channels = new ArrayList<>(unit.getChannels());
+        Post post = new Post();
+        post.setId(Long.valueOf(0));
+
+        for (int i = 0; i < channels.size(); i++) {
+            List<Post> posts = new ArrayList<>(channels.get(i).getPosts());
+            System.out.println(posts);
+            for (int j = 0; j < posts.size(); j++) {
+                if (posts.get(j).getId().longValue() > post.getId().longValue()) {
+                    post = (posts.get(j));
+                }
+            }
+        }
+        System.out.println(post);
+        return post;
+    }
 }

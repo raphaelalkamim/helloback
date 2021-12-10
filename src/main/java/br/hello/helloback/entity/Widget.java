@@ -1,13 +1,11 @@
 package br.hello.helloback.entity;
 
-import java.util.ArrayList;
 
-public class Notification {
+public class Widget {
     String content;
     String channelName;
-    ArrayList<String> usersDomains;
 
-    public Notification() {
+    public Widget() {
 
     }
 
@@ -27,12 +25,6 @@ public class Notification {
         this.channelName = channelName;
     }
 
-    public ArrayList<String> getUsersDomains() {
-        return usersDomains;
-    }
 
-    public void setUsersDomains(ArrayList<String> usersDomains) {
-        this.usersDomains = usersDomains;
-    }
 
 }
