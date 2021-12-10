@@ -76,28 +76,26 @@ public class PostController {
     // GET WIDGET
 
     @RequestMapping(value = "users/{userId}/lastPost", method = RequestMethod.GET)
-    public ResponseEntity<Set<Post>> getWidget(@PathVariable(value = "userId") Long userId) {
+    public ResponseEntity<Widget> getWidget(@PathVariable(value = "userId") Long userId) {
         Optional<AccessKey> response = accessKeyRepository.findByUserId(userId);
         if (response.isPresent()) {
             Unit unit = response.get().getUnit();
-            Set<Post> lastPost = findRecentByUnit(unit);
+            Post lastPost = findRecentByUnit(unit);
 
-            /*
-             * while (unit != null) {
-             * Post lastPostUnit = findRecentByUnit(unit);
-             * 
-             * if (lastPostUnit.getId().longValue() > lastPost.getId().longValue()) {
-             * lastPost = lastPostUnit;
-             * }
-             * unit = unit.getUnitMother();
-             * }
-             */
-            /*
-             * Widget widget = new Widget();
-             * widget.setChannelName(lastPost.getChannel().getName());
-             * widget.setContent(lastPost.getContent());
-             */
-            return new ResponseEntity<Set<Post>>(lastPost, HttpStatus.OK);
+            while (unit != null) {
+                Post lastPostUnit = findRecentByUnit(unit);
+
+                if (lastPostUnit.getId().longValue() > lastPost.getId().longValue()) {
+                    lastPost = lastPostUnit;
+                }
+                unit = unit.getUnitMother();
+            }
+
+            Widget widget = new Widget();
+            widget.setChannelName(lastPost.getChannel().getName());
+            widget.setContent(lastPost.getContent());
+
+            return new ResponseEntity<Widget>(widget, HttpStatus.OK);
 
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -204,24 +202,21 @@ public class PostController {
         }
     }
 
-    public Set<Post> findRecentByUnit(Unit unit) {
+    public Post findRecentByUnit(Unit unit) {
         List<Channel> channels = new ArrayList<>(unit.getChannels());
         Post post = new Post();
+        post.setId(Long.valueOf(0));
 
-        /*
-         * for (int i = 0; i < channels.size(); i++) {
-         * List<Post> posts = new ArrayList<>(channels.get(i).getPosts());
-         * if (posts.size() > 0) {
-         * for (int j = 0; j < posts.size(); j++) {
-         * if (posts.get(j).getId().longValue() > post.getId().longValue()) {
-         * post = posts.get(j);
-         * }
-         * }
-         * }
-         * }
-         */
-
-        return channels.get(0).getPosts();
+        for (int i = 0; i < channels.size(); i++) {
+            List<Post> posts = new ArrayList<>(channels.get(i).getPosts());
+            System.out.println(posts);
+            for (int j = 0; j < posts.size(); j++) {
+                if (posts.get(j).getId().longValue() > post.getId().longValue()) {
+                    post = (posts.get(j));
+                }
+            }
+        }
+        System.out.println(post);
+        return post;
     }
-
 }
