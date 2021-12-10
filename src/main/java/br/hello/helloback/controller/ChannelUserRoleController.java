@@ -1,9 +1,11 @@
 package br.hello.helloback.controller;
 
+import br.hello.helloback.dto.ChannelUserRoleDTO;
 import br.hello.helloback.entity.Channel;
 import br.hello.helloback.entity.ChannelUserRole;
 import br.hello.helloback.entity.Role;
 import br.hello.helloback.entity.User;
+import org.modelmapper.ModelMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,24 +51,24 @@ public class ChannelUserRoleController {
     // GET ONE
 
     @RequestMapping(value = "/channels/{channelId}/users/{userID}/CURLink", method = RequestMethod.GET)
-    public ResponseEntity<ChannelUserRole> getRoleUserChannel(
+    public ResponseEntity<ChannelUserRoleDTO> getRoleUserChannel(
         @PathVariable(value = "channelId") Long channelId,
         @PathVariable(value = "userID") Long userId) {
 
         Optional<ChannelUserRole> response = channelUserRoleRepository.findByUserIdAndChannelId(userId, channelId);
+        ModelMapper modelMapper = new ModelMapper();
         if (response.isPresent()) {
-            return new ResponseEntity<ChannelUserRole>(response.get(), HttpStatus.OK);
+            ChannelUserRoleDTO channelUserRoleDTO = modelMapper.map(response.get(), ChannelUserRoleDTO.class);
+            return new ResponseEntity<ChannelUserRoleDTO>(channelUserRoleDTO, HttpStatus.OK);
         } else {
-            ChannelUserRole leitor = new ChannelUserRole();
+            ChannelUserRoleDTO leitor = new ChannelUserRoleDTO();
             Optional<User> responseUser = userRepository.findById(userId);
             Optional<Channel> responseChannel = channelRepository.findById(channelId);
             Optional<Role> responseRole = roleRepository.findById((long) 1);
 
             if (responseUser.isPresent() && responseChannel.isPresent() && responseRole.isPresent()) {
                 leitor.setRole(responseRole.get());
-                leitor.setUser(responseUser.get());
-                leitor.setChannel(responseChannel.get());
-                return new ResponseEntity<ChannelUserRole>(leitor ,HttpStatus.OK);
+                return new ResponseEntity<ChannelUserRoleDTO>(leitor ,HttpStatus.OK);
 
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
