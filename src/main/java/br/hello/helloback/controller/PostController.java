@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -78,11 +76,11 @@ public class PostController {
     // GET WIDGET
 
     @RequestMapping(value = "users/{userId}/lastPost", method = RequestMethod.GET)
-    public ResponseEntity<Widget> getWidget(@PathVariable(value = "userId") Long userId) {
+    public ResponseEntity<Set<Post>> getWidget(@PathVariable(value = "userId") Long userId) {
         Optional<AccessKey> response = accessKeyRepository.findByUserId(userId);
         if (response.isPresent()) {
             Unit unit = response.get().getUnit();
-            Post lastPost = findRecentByUnit(unit);
+            Set<Post> lastPost = findRecentByUnit(unit);
 
             /*
              * while (unit != null) {
@@ -94,11 +92,12 @@ public class PostController {
              * unit = unit.getUnitMother();
              * }
              */
-            Widget widget = new Widget();
-            widget.setChannelName(lastPost.getChannel().getName());
-            widget.setContent(lastPost.getContent());
-
-            return new ResponseEntity<Widget>(widget, HttpStatus.OK);
+            /*
+             * Widget widget = new Widget();
+             * widget.setChannelName(lastPost.getChannel().getName());
+             * widget.setContent(lastPost.getContent());
+             */
+            return new ResponseEntity<Set<Post>>(lastPost, HttpStatus.OK);
 
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -205,30 +204,24 @@ public class PostController {
         }
     }
 
-    public Post findRecentByUnit(Unit unit) {
+    public Set<Post> findRecentByUnit(Unit unit) {
         List<Channel> channels = new ArrayList<>(unit.getChannels());
         Post post = new Post();
 
-        for (int i = 0; i < channels.size(); i++) {
-            List<Post> posts = new ArrayList<>(channels.get(i).getPosts());
-            if (posts.size() > 0) {
-                for (int j = 0; j < posts.size(); j++) {
-                    try {
-                        Date postDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
-                                .parse(posts.get(j).getCreationTime());
-                        Date firstPostDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse(post.getCreationTime());
-                        if (firstPostDate.before(postDate)) {
-                            post = posts.get(j);
-                        }
-                    } catch (ParseException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+        /*
+         * for (int i = 0; i < channels.size(); i++) {
+         * List<Post> posts = new ArrayList<>(channels.get(i).getPosts());
+         * if (posts.size() > 0) {
+         * for (int j = 0; j < posts.size(); j++) {
+         * if (posts.get(j).getId().longValue() > post.getId().longValue()) {
+         * post = posts.get(j);
+         * }
+         * }
+         * }
+         * }
+         */
 
-                }
-            }
-        }
-        return post;
+        return channels.get(0).getPosts();
     }
 
 }
