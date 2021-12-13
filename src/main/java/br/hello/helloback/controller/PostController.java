@@ -66,6 +66,7 @@ public class PostController {
                 postDTO.setUser(modelMapper.map(postItem.getUser(), UserDTO.class));
                 retorno.add(postDTO);
             }
+            Collections.reverse(retorno);
             return new ResponseEntity<List<PostDTO>>(retorno, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

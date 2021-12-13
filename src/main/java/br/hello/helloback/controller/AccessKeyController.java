@@ -1,9 +1,13 @@
 package br.hello.helloback.controller;
 
+import br.hello.helloback.dto.AccessKeyDTO;
+import br.hello.helloback.dto.UnitDTO;
+import br.hello.helloback.dto.UserDTO;
 import br.hello.helloback.entity.AccessKey;
 import br.hello.helloback.entity.Unit;
 import br.hello.helloback.entity.User;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -128,18 +132,25 @@ public class AccessKeyController {
     // PUT USER USED ACCESSCODE
 
     @RequestMapping(value = "users/{userId}/accessKeys/{accessKeyCode}", method = RequestMethod.PUT)
-    public ResponseEntity<AccessKey> putAccessKeyUser(@PathVariable(value = "accessKeyCode") String accessKeyCode,
+    public ResponseEntity<AccessKeyDTO> putAccessKeyUser(@PathVariable(value = "accessKeyCode") String accessKeyCode,
             @PathVariable(value = "userId") Long userId) {
         Optional<AccessKey> responseKey = accessKeyRepository.findByAccessCode(accessKeyCode);
         Optional<User> responseUser = userRepository.findById(userId);
+
+        ModelMapper modelMapper = new ModelMapper();
         if (responseKey.isPresent() && responseUser.isPresent()) {
             AccessKey accessKey = responseKey.get();
-            if (accessKey.getUser() != null) {
+            if (accessKey.getUser() != null || accessKeyRepository.findByUserId(userId).isPresent()) {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
             accessKey.setUser(responseUser.get());
             accessKeyRepository.save(accessKey);
-            return new ResponseEntity<AccessKey>(HttpStatus.OK);
+
+            AccessKeyDTO accessKeyDTO = modelMapper.map(responseKey.get(), AccessKeyDTO.class);
+            accessKeyDTO.setUser(modelMapper.map(responseUser.get(), UserDTO.class));
+            accessKeyDTO.setUnit(modelMapper.map(responseKey.get().getUnit(), UnitDTO.class));
+    
+            return new ResponseEntity<AccessKeyDTO>(accessKeyDTO, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
