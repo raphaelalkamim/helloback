@@ -140,7 +140,7 @@ public class AccessKeyController {
         ModelMapper modelMapper = new ModelMapper();
         if (responseKey.isPresent() && responseUser.isPresent()) {
             AccessKey accessKey = responseKey.get();
-            if (accessKeyRepository.findByUserId(userId).isPresent()) {
+            if (accessKey.getUser() != null && accessKeyRepository.findByUserId(userId).isPresent()) {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
             accessKey.setUser(responseUser.get());
