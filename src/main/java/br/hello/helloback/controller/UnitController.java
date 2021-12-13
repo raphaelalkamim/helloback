@@ -72,7 +72,7 @@ public class UnitController {
                 UnitDTO unitDTO = modelMapper.map(unitItem, UnitDTO.class);
                 retorno.add(unitDTO);
             }
-            //Collections.reverse(retorno);
+            Collections.reverse(retorno);
             return new ResponseEntity<List<UnitDTO>>(retorno, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

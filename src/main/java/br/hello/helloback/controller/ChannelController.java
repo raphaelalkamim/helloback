@@ -49,7 +49,7 @@ public class ChannelController {
                 ChannelDTO channelDTO = modelMapper.map(channelItem, ChannelDTO.class);
                 retorno.add(channelDTO);
             }
-            //Collections.reverse(retorno);
+            Collections.reverse(retorno);
             return new ResponseEntity<List<ChannelDTO>>(retorno, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
