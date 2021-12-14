@@ -140,7 +140,7 @@ public class PostController {
             notification.setChannelName(responseChannel.get().getName());
             notification.setContent(post.getContent());
             notification.setUsersDomains(notificationPost(responseChannel.get()));
-            return new ResponseEntity<PostDTO>(HttpStatus.OK);
+            return new ResponseEntity<PostDTO>(postDTO, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
