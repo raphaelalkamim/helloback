@@ -119,8 +119,8 @@ public class PostController {
 
     // POST
 
-    @RequestMapping(value = "/channels/{channelId}/users/{userID}/posts", method = RequestMethod.POST, consumes = {"application/json"},
-    produces = {"application/json"})
+    @RequestMapping(value = "/channels/{channelId}/users/{userID}/posts", method = RequestMethod.POST, consumes = {"application/json", "application/x-www-form-urlencoded"},
+    produces = {"application/json", "application/x-www-form-urlencoded"})
     public ResponseEntity<PostDTO> createPost(@Valid @RequestBody Post post,
             @PathVariable(value = "channelId") Long channelId,
             @PathVariable(value = "userID") Long userId) {
