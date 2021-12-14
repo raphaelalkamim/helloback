@@ -13,7 +13,6 @@ import br.hello.helloback.entity.Widget;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -119,8 +118,7 @@ public class PostController {
 
     // POST
 
-    @RequestMapping(value = "/channels/{channelId}/users/{userID}/posts", method = RequestMethod.POST, consumes = {"application/json", "application/x-www-form-urlencoded"},
-    produces = {"application/json", "application/x-www-form-urlencoded"})
+    @RequestMapping(value = "/channels/{channelId}/users/{userID}/posts", method = RequestMethod.POST)
     public ResponseEntity<PostDTO> createPost(@Valid @RequestBody Post post,
             @PathVariable(value = "channelId") Long channelId,
             @PathVariable(value = "userID") Long userId) {
