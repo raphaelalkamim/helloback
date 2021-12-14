@@ -119,7 +119,7 @@ public class PostController {
     // POST
 
     @RequestMapping(value = "/channels/{channelId}/users/{userID}/posts", method = RequestMethod.POST)
-    public ResponseEntity<Notification> createPost(@Valid @RequestBody Post post,
+    public ResponseEntity<PostDTO> createPost(@Valid @RequestBody Post post,
             @PathVariable(value = "channelId") Long channelId,
             @PathVariable(value = "userID") Long userId) {
         Optional<Channel> responseChannel = channelRepository.findById(channelId);
@@ -140,7 +140,7 @@ public class PostController {
             notification.setChannelName(responseChannel.get().getName());
             notification.setContent(post.getContent());
             notification.setUsersDomains(notificationPost(responseChannel.get()));
-            return new ResponseEntity<Notification>(HttpStatus.OK);
+            return new ResponseEntity<PostDTO>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
